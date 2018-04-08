@@ -7,6 +7,6 @@
 
 ## Installation
 
-1. (Download the repo!)[https://github.com/makixx/makis-blender-tools/archive/master.zip]
+1. [Download the repo!](https://github.com/makixx/makis-blender-tools/archive/master.zip)
 2. File > User Preferences > Add-ons > Install Add-on from File
 3. ???
