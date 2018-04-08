@@ -13,7 +13,7 @@
 3. ???
 
 **Hard way:**
-```
-cd %appdata%\Blender Foundation\Blender\2.79\scripts\addons
+```sh
+cd "%appdata%\Blender Foundation\Blender\2.79\scripts\addons"
 git clone https://github.com/makixx/makis-blender-tools
 ```
