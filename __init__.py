@@ -1,6 +1,7 @@
 import bpy
 import bpy_extras
 import mathutils
+import math
 
 bl_info = {
 	"name": "Maki's Blender Tools",
@@ -23,6 +24,8 @@ class IcoPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
 	width = bpy.props.IntProperty(name="Width", default=6, min=1)
 	height = bpy.props.IntProperty(name="Height", default=6, min=1)
 
+	magicNumber = math.tan(math.radians(60))*0.5
+
 	def draw(self, context):
 		self.layout.prop(self, "width")
 		self.layout.prop(self, "height")
@@ -32,7 +35,7 @@ class IcoPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
 
 	def generate(self, w, h):
 		sx = -(w/2)
-		sy = -(h/2);
+		sy = -(h/2)
 
 		verts = []
 		faces = []
@@ -41,7 +44,7 @@ class IcoPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
 			if (y%2 == 0): # odd rows (first)
 				i = len(verts)
 				for x in range(0, w+1):
-					verts.append(mathutils.Vector((sx+x, -sy-y, 0)))
+					verts.append(mathutils.Vector((sx+x, (-sy-y)*self.magicNumber, 0)))
 
 				if (y>=h): continue # not the bottom
 				for x in range(0, w): # V faces
@@ -52,7 +55,7 @@ class IcoPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
 			else: # even rows (second)
 				i = len(verts)
 				for x in range(0, w):
-					verts.append(mathutils.Vector((sx+x+0.5, -sy-y, 0)))
+					verts.append(mathutils.Vector((sx+x+0.5, (-sy-y)*self.magicNumber, 0)))
 
 				if (y>=h): continue # not the bottom
 				for x in range(0, w):
