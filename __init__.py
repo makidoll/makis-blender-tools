@@ -18,7 +18,7 @@ bl_info = {
 
 class IcoPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
 	bl_idname = "mesh.add_icoplane"
-	bl_label = "Ico Plane"
+	bl_label = "Add Ico Plane"
 	bl_options = {"REGISTER", "UNDO"}
 
 	width = bpy.props.IntProperty(name="Width", default=6, min=1)
