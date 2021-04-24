@@ -1,142 +1,46 @@
-import bpy
-import bpy_extras
-import mathutils
-import math
-
 bl_info = {
-	"name": "Maki's Blender Tools",
-	"author": "Maki",
-	"version": (1, 0),
-	"blender": (2, 79, 0),
-	"location": "View 3D > Tool Shelf > Maki",
-	"description": "A bunch of useful tools to make my life more useful!",
-	"warning": "",
-	"wiki_url": "https://github.com/makixx/makis-blender-tools",
-	"tracker_url": "https://github.com/makixx/makis-blender-tools/issues",
-	"category": "3D View",
+    "name": "Maki's Blender Tools",
+    "author": "Maki",
+    "description": "Makes things!",
+    "version": (0, 0, 1),
+    "blender": (2, 91, 0),
+    "location": "View 3D > Tool Shelf > Maki",
+    "warning": "",
+    "wiki_url": "https://github.com/makitsune/makis-blender-tools",
+    "tracker_url": "https://github.com/makitsune/makis-blender-tools/issues",
+    "category": "3D View",
 }
 
-class IcoPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
-	bl_idname = "mesh.add_icoplane"
-	bl_label = "Add Ico Plane"
-	bl_options = {"REGISTER", "UNDO"}
+import bpy
+from bpy.utils import register_class, unregister_class
 
-	width = bpy.props.IntProperty(name="Width", default=6, min=1)
-	height = bpy.props.IntProperty(name="Height", default=6, min=1)
+from .operators.add_ico_plane import *
+from .operators.add_subdivided_plane import *
 
-	magicNumber = math.tan(math.radians(60))*0.5
+from .panels.meshes_panel import *
 
-	def draw(self, context):
-		self.layout.prop(self, "width")
-		self.layout.prop(self, "height")
-		# self.layout.separator()
-		# self.layout.prop(self, "location")
-		# self.layout.prop(self, "rotation")
+classes = (
+    # operators
+    AddIcoPlane,
+    AddSubdividedPlane,
+    # panels
+    MeshesPanel
+)
 
-	def generate(self, w, h):
-		sx = -(w/2)
-		sy = -(h/2)
-
-		verts = []
-		faces = []
-
-		for y in range(0, h+1):
-			if (y%2 == 0): # odd rows (first)
-				i = len(verts)
-				for x in range(0, w+1):
-					verts.append(mathutils.Vector((sx+x, (-sy-y)*self.magicNumber, 0)))
-
-				if (y>=h): continue # not the bottom
-				for x in range(0, w): # V faces
-					faces.append([i+x+1, i+x, i+x+w+1])
-				for x in range(0, w-1): # ^'s in between V's
-					faces.append([i+x+1, i+x+w+1, i+x+w+2])
-
-			else: # even rows (second)
-				i = len(verts)
-				for x in range(0, w):
-					verts.append(mathutils.Vector((sx+x+0.5, (-sy-y)*self.magicNumber, 0)))
-
-				if (y>=h): continue # not the bottom
-				for x in range(0, w):
-					faces.append([i+x, i+x+w, i+x+w+1])
-				for x in range(0, w-1):
-					faces.append([i+x, i+x+w+1, i+x+1])
-
-		return [verts, faces]
-
-class SplitPlane(bpy.types.Operator, bpy_extras.object_utils.AddObjectHelper):
-	bl_idname = "mesh.add_splitplane"
-	bl_label = "Add Split Plane"
-	bl_options = {"REGISTER", "UNDO"}
-
-	width = bpy.props.IntProperty(name="Width", default=16, min=1)
-	height = bpy.props.IntProperty(name="Height", default=16, min=1)
-	dist = bpy.props.FloatProperty(name="Distance", default=0.1)
-
-	def draw(self, context):
-		self.layout.prop(self, "width")
-		self.layout.prop(self, "height")
-		self.layout.prop(self, "dist")
-
-	def generate(self, w, h):
-		verts = []
-		faces = []
-		
-		for x in range(0, w):
-			for y in range(0, h):
-				cx = (x*self.dist)-(self.width*self.dist)/2
-				cy = (y*self.dist)-(self.height*self.dist)/2
-				verts.append(mathutils.Vector((cx,          cy,          0)))
-				verts.append(mathutils.Vector((cx+self.dist,cy,          0)))
-				verts.append(mathutils.Vector((cx,          cy+self.dist,0)))
-				verts.append(mathutils.Vector((cx+self.dist,cy+self.dist,0)))
-
-				i = (x+(y*self.width))*4
-				faces.append([i,i+1,i+3,i+2])
-
-		return [verts, faces]
-
-	def execute(self, context):
-		data = self.generate(self.width, self.height)
-
-		mesh = bpy.data.meshes.new(name="Split Plane")
-		mesh.from_pydata(data[0], [], data[1])
-		mesh.update(calc_edges=True)
-		bpy_extras.object_utils.object_data_add(context, mesh, operator=self)
-
-		return {"FINISHED"}
-
-class ToolPanel(bpy.types.Panel):
-	bl_label = "Maki's Tools"
-	bl_idname = "3D_VIEW_TS_maki"
-	bl_space_type = "VIEW_3D"
-	bl_region_type = "TOOLS"
-	bl_category = "Maki"
-
-	def draw(self, context):
-		layout = self.layout
-
-		obj = context.object
-
-		row = layout.row()
-		row.label(text="Add Mesh", icon="MESH_DATA")
-
-		row = layout.row()
-		row.operator("mesh.add_icoplane")
-
-		row = layout.row()
-		row.operator("mesh.add_splitplane")
+# main_register, main_unregister = bpy.utils.register_classes_factory(classes)
 
 def register():
-	bpy.utils.register_class(IcoPlane)
-	bpy.utils.register_class(SplitPlane)
-	bpy.utils.register_class(ToolPanel)
+	# main_register()
+	for cls in classes:
+		try:
+			bpy.utils.register_class(cls)
+		except Exception as e:
+			print("ERROR: Failed to register class {0}: {1}".format(cls, e))
 
 def unregister():
-	bpy.utils.unregister_class(IcoPlane)
-	bpy.utils.unregister_class(SplitPlane)
-	bpy.utils.unregister_class(ToolPanel)
-
-if __name__ == "__main__":
-	register()
+	# main_unregister()
+	for cls in classes:
+		try:
+			bpy.utils.unregister_class(cls)
+		except Exception as e:
+			print("ERROR: Failed to unregister class {0}: {1}".format(cls, e))

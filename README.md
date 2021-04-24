@@ -1,10 +1,8 @@
 # Maki's Blender Tools
-> 📦 A bunch of useful tools to make my life more useful!
 
-## Features
+> 📦 Makes things!
 
-- Make Ico Planes! (similar to an Ico Sphere)
-
+<!--
 ## Installation
 
 **Easy way:**
@@ -17,3 +15,4 @@
 cd "%appdata%\Blender Foundation\Blender\2.79\scripts\addons"
 git clone https://github.com/makixx/makis-blender-tools
 ```
+-->
