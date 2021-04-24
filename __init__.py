@@ -14,8 +14,8 @@ bl_info = {
 import bpy
 from bpy.utils import register_class, unregister_class
 
-from .operators.add_ico_plane import *
-from .operators.add_subdivided_plane import *
+from .operators.meshes.add_ico_plane import *
+from .operators.meshes.add_subdivided_plane import *
 
 from .panels.meshes_panel import *
 
