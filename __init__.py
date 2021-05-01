@@ -16,15 +16,19 @@ from bpy.utils import register_class, unregister_class
 
 from .operators.meshes.add_ico_plane import *
 from .operators.meshes.add_subdivided_plane import *
+from .operators.split_flap.add_split_flap import *
 
 from .panels.meshes_panel import *
+from .panels.split_flap_panel import *
 
 classes = (
     # operators
     AddIcoPlane,
     AddSubdividedPlane,
+    AddSplitFlap,
     # panels
-    MeshesPanel
+    MeshesPanel,
+    SplitFlapPanel
 )
 
 # main_register, main_unregister = bpy.utils.register_classes_factory(classes)
